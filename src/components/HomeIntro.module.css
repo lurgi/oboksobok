@@ -1,0 +1,30 @@
+.root {
+  max-width: 680px;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #6c5f4b;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.root h1 {
+  margin: 0;
+  font-size: 48px;
+  line-height: 1.08;
+}
+
+.root p:last-child {
+  max-width: 560px;
+  margin: 20px 0 0;
+  color: #4d463b;
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+  .root h1 {
+    font-size: 34px;
+  }
+}

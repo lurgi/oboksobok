@@ -1,0 +1,28 @@
+{
+  "name": "oboksobok",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "prepare": "git config core.hooksPath .githooks"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@notionhq/client": "^5.22.0",
+    "astro": "^5.18.2",
+    "notion-client": "^7.10.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-notion-x": "^7.10.0",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.0"
+  }
+}

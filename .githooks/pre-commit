@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+echo "Formatting staged files with Biome..."
+npx biome format --write --staged --no-errors-on-unmatched
+git update-index --again
