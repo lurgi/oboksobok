@@ -3,6 +3,9 @@
 }
 
 .header {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
   width: 100%;
   margin: 0 0 32px;
 }
@@ -17,19 +20,14 @@
 .author {
   display: flex;
   align-items: center;
-  margin-top: 18px;
   color: var(--color-text-muted);
   font-size: 14px;
   line-height: 1.4;
 }
 
-.authorName {
-  font-weight: 500;
-}
-
 .divider {
   height: 1px;
-  margin: 28px 0 0;
+  margin: 10px 0 0;
   border: 0;
   background: var(--color-border-muted);
 }

@@ -14,9 +14,7 @@ export function NotionPage({ title, authorName, recordMap, rootPageId }: NotionP
     <article className={`${styles.root} oboksobok-notion`} aria-labelledby="assay-title">
       <header className={styles.header}>
         <h1 id="assay-title">{title}</h1>
-        <div className={styles.author}>
-          <span className={styles.authorName}>{authorName}</span>
-        </div>
+        <div className={styles.author}>{authorName}</div>
         <hr className={styles.divider} />
       </header>
       <div>
