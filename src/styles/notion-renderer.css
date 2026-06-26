@@ -81,6 +81,22 @@
   line-height: var(--essay-h3-line-height);
 }
 
+.oboksobok-notion .notion-column .notion-asset-wrapper-image > div,
+.oboksobok-notion .notion-column .notion-asset-wrapper-image .lazy-image-wrapper {
+  height: auto !important;
+}
+
+.oboksobok-notion
+  .notion-column
+  .notion-asset-wrapper-image
+  .lazy-image-wrapper
+  img.lazy-image-real {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none;
+  object-fit: contain;
+}
+
 @media (max-width: 640px) {
   .oboksobok-notion .notion-row .notion-column {
     width: 100% !important;
