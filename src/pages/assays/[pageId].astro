@@ -1,0 +1,49 @@
+---
+import { NotionPage } from "../../components/NotionPage";
+import { notion, type AssayPageWithRecordMap } from "../../lib/server/notion";
+import "../../styles/global.css";
+import "react-notion-x/styles.css";
+
+export async function getStaticPaths() {
+  const assay = await notion.getFirstAssayPage();
+
+  return [
+    {
+      params: {
+        pageId: assay.page.id,
+      },
+      props: {
+        assay,
+      },
+    },
+  ];
+}
+
+type Props = {
+  assay: AssayPageWithRecordMap;
+};
+
+const { assay } = Astro.props;
+const title = `${assay.page.title} | 오복소복`;
+const description = "Notion에서 가져온 오복소복 글";
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main class="assay-page">
+      <NotionPage
+        title={assay.page.title}
+        recordMap={assay.recordMap}
+        rootPageId={assay.page.id}
+      />
+    </main>
+  </body>
+</html>

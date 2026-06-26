@@ -13,9 +13,18 @@ main {
   padding: 32px;
 }
 
+main.assay-page {
+  display: block;
+  padding: 48px 20px 80px;
+}
+
 @media (max-width: 640px) {
   main {
     place-items: start;
     padding: 28px 20px;
+  }
+
+  main.assay-page {
+    padding: 32px 16px 64px;
   }
 }

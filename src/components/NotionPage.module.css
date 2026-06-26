@@ -1,0 +1,33 @@
+.root {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.header {
+  max-width: 720px;
+  margin: 0 auto 32px;
+}
+
+.header p {
+  margin: 0 0 12px;
+  color: #6c5f4b;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 42px;
+  line-height: 1.18;
+}
+
+.notion :global(.notion) {
+  color: inherit;
+  font-family: inherit;
+}
+
+@media (max-width: 640px) {
+  .header h1 {
+    font-size: 30px;
+  }
+}
