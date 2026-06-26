@@ -1,0 +1,31 @@
+---
+import "../styles/global.css";
+
+type Props = {
+  description: string;
+  title: string;
+};
+
+const { description, title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-wordmark" href="/" aria-label="오복소복 홈">
+        <span class="site-wordmark-frame">
+          <img src="/oboksobok-wordmark.svg" alt="" />
+        </span>
+      </a>
+    </header>
+    <slot />
+  </body>
+</html>

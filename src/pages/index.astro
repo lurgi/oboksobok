@@ -1,23 +1,13 @@
 ---
 import { HomeIntro } from "../components/HomeIntro";
-import "../styles/global.css";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
 const title = "오복소복";
 const description = "Notion 콘텐츠를 빌드 타임에 가져오는 Astro 정적 사이트";
 ---
 
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <main>
-      <HomeIntro />
-    </main>
-  </body>
-</html>
+<BaseLayout title={title} description={description}>
+  <main>
+    <HomeIntro />
+  </main>
+</BaseLayout>

@@ -1,30 +1,100 @@
 .root {
-  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  text-align: center;
 }
 
-.eyebrow {
-  margin: 0 0 12px;
+.pixelArt {
+  --pixel: 12px;
+
+  position: relative;
+  width: calc(var(--pixel) * 14);
+  height: calc(var(--pixel) * 14);
+}
+
+.pixel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--pixel);
+  height: var(--pixel);
+  background: transparent;
+  box-shadow:
+    calc(var(--pixel) * 5) calc(var(--pixel) * 1) 0 #2d2d2d,
+    calc(var(--pixel) * 6) calc(var(--pixel) * 1) 0 #2d2d2d,
+    calc(var(--pixel) * 7) calc(var(--pixel) * 1) 0 #2d2d2d,
+    calc(var(--pixel) * 4) calc(var(--pixel) * 2) 0 #2d2d2d,
+    calc(var(--pixel) * 5) calc(var(--pixel) * 2) 0 #fff,
+    calc(var(--pixel) * 6) calc(var(--pixel) * 2) 0 #fff,
+    calc(var(--pixel) * 7) calc(var(--pixel) * 2) 0 #fff,
+    calc(var(--pixel) * 8) calc(var(--pixel) * 2) 0 #2d2d2d,
+    calc(var(--pixel) * 3) calc(var(--pixel) * 3) 0 #2d2d2d,
+    calc(var(--pixel) * 4) calc(var(--pixel) * 3) 0 #fff,
+    calc(var(--pixel) * 5) calc(var(--pixel) * 3) 0 #fff,
+    calc(var(--pixel) * 6) calc(var(--pixel) * 3) 0 #fff,
+    calc(var(--pixel) * 7) calc(var(--pixel) * 3) 0 #fff,
+    calc(var(--pixel) * 8) calc(var(--pixel) * 3) 0 #fff,
+    calc(var(--pixel) * 9) calc(var(--pixel) * 3) 0 #2d2d2d,
+    calc(var(--pixel) * 2) calc(var(--pixel) * 4) 0 #2d2d2d,
+    calc(var(--pixel) * 3) calc(var(--pixel) * 4) 0 #fff,
+    calc(var(--pixel) * 4) calc(var(--pixel) * 4) 0 #fff,
+    calc(var(--pixel) * 5) calc(var(--pixel) * 4) 0 #fff,
+    calc(var(--pixel) * 6) calc(var(--pixel) * 4) 0 #fff,
+    calc(var(--pixel) * 7) calc(var(--pixel) * 4) 0 #fff,
+    calc(var(--pixel) * 8) calc(var(--pixel) * 4) 0 #fff,
+    calc(var(--pixel) * 9) calc(var(--pixel) * 4) 0 #fff,
+    calc(var(--pixel) * 10) calc(var(--pixel) * 4) 0 #2d2d2d,
+    calc(var(--pixel) * 2) calc(var(--pixel) * 5) 0 #2d2d2d,
+    calc(var(--pixel) * 3) calc(var(--pixel) * 5) 0 #fff,
+    calc(var(--pixel) * 4) calc(var(--pixel) * 5) 0 #2d2d2d,
+    calc(var(--pixel) * 5) calc(var(--pixel) * 5) 0 #fff,
+    calc(var(--pixel) * 6) calc(var(--pixel) * 5) 0 #fff,
+    calc(var(--pixel) * 7) calc(var(--pixel) * 5) 0 #fff,
+    calc(var(--pixel) * 8) calc(var(--pixel) * 5) 0 #2d2d2d,
+    calc(var(--pixel) * 9) calc(var(--pixel) * 5) 0 #fff,
+    calc(var(--pixel) * 10) calc(var(--pixel) * 5) 0 #2d2d2d,
+    calc(var(--pixel) * 2) calc(var(--pixel) * 6) 0 #2d2d2d,
+    calc(var(--pixel) * 3) calc(var(--pixel) * 6) 0 #fff,
+    calc(var(--pixel) * 4) calc(var(--pixel) * 6) 0 #fff,
+    calc(var(--pixel) * 5) calc(var(--pixel) * 6) 0 #fff,
+    calc(var(--pixel) * 6) calc(var(--pixel) * 6) 0 #2d2d2d,
+    calc(var(--pixel) * 7) calc(var(--pixel) * 6) 0 #fff,
+    calc(var(--pixel) * 8) calc(var(--pixel) * 6) 0 #fff,
+    calc(var(--pixel) * 9) calc(var(--pixel) * 6) 0 #fff,
+    calc(var(--pixel) * 10) calc(var(--pixel) * 6) 0 #2d2d2d,
+    calc(var(--pixel) * 3) calc(var(--pixel) * 7) 0 #2d2d2d,
+    calc(var(--pixel) * 4) calc(var(--pixel) * 7) 0 #fff,
+    calc(var(--pixel) * 5) calc(var(--pixel) * 7) 0 #fff,
+    calc(var(--pixel) * 6) calc(var(--pixel) * 7) 0 #fff,
+    calc(var(--pixel) * 7) calc(var(--pixel) * 7) 0 #fff,
+    calc(var(--pixel) * 8) calc(var(--pixel) * 7) 0 #fff,
+    calc(var(--pixel) * 9) calc(var(--pixel) * 7) 0 #2d2d2d,
+    calc(var(--pixel) * 4) calc(var(--pixel) * 8) 0 #2d2d2d,
+    calc(var(--pixel) * 5) calc(var(--pixel) * 8) 0 #2d2d2d,
+    calc(var(--pixel) * 6) calc(var(--pixel) * 8) 0 #2d2d2d,
+    calc(var(--pixel) * 7) calc(var(--pixel) * 8) 0 #2d2d2d,
+    calc(var(--pixel) * 8) calc(var(--pixel) * 8) 0 #2d2d2d,
+    calc(var(--pixel) * 5) calc(var(--pixel) * 10) 0 var(--color-border-muted),
+    calc(var(--pixel) * 6) calc(var(--pixel) * 10) 0 var(--color-border-muted),
+    calc(var(--pixel) * 7) calc(var(--pixel) * 10) 0 var(--color-border-muted);
+}
+
+.root p {
+  margin: 0;
   color: var(--color-text-muted);
   font-size: 14px;
-  font-weight: 700;
-}
-
-.root h1 {
-  margin: 0;
-  font-size: 48px;
-  line-height: 1.08;
-}
-
-.root p:last-child {
-  max-width: 560px;
-  margin: 20px 0 0;
-  color: var(--color-text-muted);
-  font-size: 18px;
-  line-height: 1.7;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 @media (max-width: 640px) {
-  .root h1 {
-    font-size: 34px;
+  .root {
+    gap: 24px;
+  }
+
+  .pixelArt {
+    --pixel: 10px;
   }
 }

@@ -8,9 +8,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "check": "biome check .",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "format:staged": "biome format --write --staged --no-errors-on-unmatched",
+    "check:staged": "biome check --write --staged --no-errors-on-unmatched",
     "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {
