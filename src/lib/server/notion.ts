@@ -9,7 +9,9 @@ export type OboksobokNotionClientOptions = {
 };
 
 export type AssayPageSummary = {
+  authorName: string;
   id: string;
+  notionPageId: string;
   title: string;
 };
 
@@ -76,7 +78,9 @@ export class OboksobokNotionClient {
 
     return {
       page: {
-        id: page.id,
+        authorName: extractAuthorName(page.properties),
+        id: extractRequiredPagePropertyId(page.properties),
+        notionPageId: page.id,
         title: extractTitle(page.properties),
       },
       recordMap,
@@ -134,6 +138,163 @@ function extractTitle(properties: Record<string, unknown>) {
   return "Untitled";
 }
 
+function extractRequiredPagePropertyId(properties: Record<string, unknown>): string {
+  const idProperty = findPropertyByName(properties, "id");
+
+  if (!idProperty) {
+    throw new Error('Notion page is missing required "id" property');
+  }
+
+  const value = extractPlainPropertyValue(idProperty);
+
+  if (!value) {
+    throw new Error('Notion page "id" property is empty');
+  }
+
+  return value;
+}
+
+function extractAuthorName(properties: Record<string, unknown>) {
+  const authorProperty = findFirstPropertyByName(properties, ["작성자", "author"]);
+
+  if (!authorProperty) {
+    throw new Error('Notion page is missing required "작성자" property');
+  }
+
+  const value = extractAuthorPropertyValue(authorProperty);
+
+  if (!value) {
+    throw new Error('Notion page "작성자" property is empty');
+  }
+
+  return value;
+}
+
+function findPropertyByName(properties: Record<string, unknown>, name: string) {
+  const target = name.toLowerCase();
+
+  for (const [propertyName, property] of Object.entries(properties)) {
+    if (propertyName.toLowerCase() === target) {
+      return property;
+    }
+  }
+
+  return undefined;
+}
+
+function findFirstPropertyByName(properties: Record<string, unknown>, names: string[]) {
+  const targets = new Set(names.map((name) => name.toLowerCase()));
+
+  for (const [propertyName, property] of Object.entries(properties)) {
+    if (targets.has(propertyName.toLowerCase())) {
+      return property;
+    }
+  }
+
+  return undefined;
+}
+
+function extractAuthorPropertyValue(property: unknown): string | undefined {
+  if (!isTypedProperty(property)) {
+    return undefined;
+  }
+
+  switch (property.type) {
+    case "people":
+      return extractPeopleNames(property.people);
+    case "created_by":
+      return extractUserName(property.created_by);
+    default:
+      return extractPlainPropertyValue(property);
+  }
+}
+
+function extractPlainPropertyValue(property: unknown): string | undefined {
+  if (!isTypedProperty(property)) {
+    return undefined;
+  }
+
+  switch (property.type) {
+    case "title":
+      return extractRichTextValue(property.title);
+    case "rich_text":
+      return extractRichTextValue(property.rich_text);
+    case "unique_id":
+      return extractUniqueIdValue(property.unique_id);
+    case "number":
+      return typeof property.number === "number" ? String(property.number) : undefined;
+    case "formula":
+      return extractFormulaValue(property.formula);
+    case "url":
+    case "email":
+    case "phone_number": {
+      const value = property[property.type];
+
+      return typeof value === "string" ? value : undefined;
+    }
+    default:
+      return undefined;
+  }
+}
+
+function extractRichTextValue(value: unknown): string | undefined {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  const text = value
+    .map((part) => (isPlainTextPart(part) ? part.plain_text : ""))
+    .join("")
+    .trim();
+
+  return text || undefined;
+}
+
+function extractPeopleNames(value: unknown): string | undefined {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  const names = value.map(extractUserName).filter((name) => typeof name === "string");
+
+  return names.length > 0 ? names.join(", ") : undefined;
+}
+
+function extractUserName(value: unknown): string | undefined {
+  if (!isUserValue(value)) {
+    return undefined;
+  }
+
+  return value.name?.trim() || undefined;
+}
+
+function extractUniqueIdValue(value: unknown): string | undefined {
+  if (!isUniqueIdValue(value)) {
+    return undefined;
+  }
+
+  if (value.prefix) {
+    return `${value.prefix}-${value.number}`;
+  }
+
+  return String(value.number);
+}
+
+function extractFormulaValue(value: unknown): string | undefined {
+  if (!isFormulaValue(value)) {
+    return undefined;
+  }
+
+  switch (value.type) {
+    case "string":
+      return typeof value.string === "string" ? value.string.trim() || undefined : undefined;
+    case "number":
+      return typeof value.number === "number" ? String(value.number) : undefined;
+    default:
+      return undefined;
+  }
+}
+
 function isTitleProperty(
   property: unknown,
 ): property is { type: "title"; title: Array<{ plain_text: string }> } {
@@ -144,5 +305,51 @@ function isTitleProperty(
     property.type === "title" &&
     "title" in property &&
     Array.isArray(property.title)
+  );
+}
+
+function isTypedProperty(
+  property: unknown,
+): property is Record<string, unknown> & { type: string } {
+  return (
+    typeof property === "object" &&
+    property !== null &&
+    "type" in property &&
+    typeof property.type === "string"
+  );
+}
+
+function isPlainTextPart(part: unknown): part is { plain_text: string } {
+  return (
+    typeof part === "object" &&
+    part !== null &&
+    "plain_text" in part &&
+    typeof part.plain_text === "string"
+  );
+}
+
+function isUserValue(value: unknown): value is { name: string | null } {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "name" in value &&
+    (typeof value.name === "string" || value.name === null)
+  );
+}
+
+function isUniqueIdValue(value: unknown): value is { prefix: string | null; number: number } {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "prefix" in value &&
+    (typeof value.prefix === "string" || value.prefix === null) &&
+    "number" in value &&
+    typeof value.number === "number"
+  );
+}
+
+function isFormulaValue(value: unknown): value is Record<string, unknown> & { type: string } {
+  return (
+    typeof value === "object" && value !== null && "type" in value && typeof value.type === "string"
   );
 }

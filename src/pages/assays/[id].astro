@@ -3,6 +3,7 @@ import { NotionPage } from "../../components/NotionPage";
 import { notion, type AssayPageWithRecordMap } from "../../lib/server/notion";
 import "../../styles/global.css";
 import "react-notion-x/styles.css";
+import "../../styles/notion-renderer.css";
 
 export async function getStaticPaths() {
   const assay = await notion.getFirstAssayPage();
@@ -10,7 +11,7 @@ export async function getStaticPaths() {
   return [
     {
       params: {
-        pageId: assay.page.id,
+        id: assay.page.id,
       },
       props: {
         assay,
@@ -38,11 +39,12 @@ const description = "Notion에서 가져온 오복소복 글";
     <title>{title}</title>
   </head>
   <body>
-    <main class="assay-page">
+    <main class="essay-page">
       <NotionPage
+        authorName={assay.page.authorName}
         title={assay.page.title}
         recordMap={assay.recordMap}
-        rootPageId={assay.page.id}
+        rootPageId={assay.page.notionPageId}
       />
     </main>
   </body>

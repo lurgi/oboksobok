@@ -4,18 +4,22 @@ import styles from "./NotionPage.module.css";
 
 type NotionPageProps = {
   title: string;
+  authorName: string;
   recordMap: AssayPageWithRecordMap["recordMap"];
   rootPageId: string;
 };
 
-export function NotionPage({ title, recordMap, rootPageId }: NotionPageProps) {
+export function NotionPage({ title, authorName, recordMap, rootPageId }: NotionPageProps) {
   return (
-    <article className={styles.root} aria-labelledby="assay-title">
+    <article className={`${styles.root} oboksobok-notion`} aria-labelledby="assay-title">
       <header className={styles.header}>
-        <p>오복소복</p>
         <h1 id="assay-title">{title}</h1>
+        <div className={styles.author}>
+          <span className={styles.authorName}>{authorName}</span>
+        </div>
+        <hr className={styles.divider} />
       </header>
-      <div className={styles.notion}>
+      <div>
         <NotionRenderer
           recordMap={recordMap}
           rootPageId={rootPageId}

@@ -1,0 +1,90 @@
+.oboksobok-notion {
+  --essay-line-height: 1.68;
+  --essay-paragraph-gap: 0.56em;
+  --essay-list-item-gap: 0.24em;
+  --essay-heading-weight: 500;
+  --essay-h1-size: 2rem;
+  --essay-h2-size: 1.55rem;
+  --essay-h3-size: 1.25rem;
+  --essay-h1-line-height: 1.3;
+  --essay-h2-line-height: 1.36;
+  --essay-h3-line-height: 1.42;
+  --essay-h1-margin-top: 1.32em;
+  --essay-h2-margin-top: 1.24em;
+  --essay-h3-margin-top: 1.12em;
+}
+
+.oboksobok-notion .notion {
+  color: inherit;
+  font-family: inherit;
+  line-height: var(--essay-line-height);
+}
+
+.oboksobok-notion .notion-page {
+  width: 100%;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.oboksobok-notion .notion-text {
+  margin-top: var(--essay-paragraph-gap);
+  margin-bottom: var(--essay-paragraph-gap);
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: var(--essay-line-height);
+}
+
+.oboksobok-notion .notion-list {
+  margin-block-start: 0.72em;
+  margin-block-end: 0.72em;
+}
+
+.oboksobok-notion .notion-list li {
+  padding-top: var(--essay-list-item-gap);
+  padding-bottom: var(--essay-list-item-gap);
+  line-height: var(--essay-line-height);
+}
+
+.oboksobok-notion .notion-quote {
+  margin-top: 0.9em;
+  margin-bottom: 0.9em;
+  line-height: var(--essay-line-height);
+}
+
+.oboksobok-notion .notion-h {
+  font-weight: var(--essay-heading-weight);
+}
+
+.oboksobok-notion .notion-h1 {
+  margin-top: var(--essay-h1-margin-top);
+  font-size: var(--essay-h1-size);
+  line-height: var(--essay-h1-line-height);
+}
+
+.oboksobok-notion .notion-h2 {
+  margin-top: var(--essay-h2-margin-top);
+  font-size: var(--essay-h2-size);
+  line-height: var(--essay-h2-line-height);
+}
+
+.oboksobok-notion .notion-h3 {
+  margin-top: var(--essay-h3-margin-top);
+  font-size: var(--essay-h3-size);
+  line-height: var(--essay-h3-line-height);
+}
+
+@media (max-width: 640px) {
+  .oboksobok-notion .notion-row .notion-column {
+    width: 100% !important;
+    max-width: 100%;
+    align-self: stretch;
+  }
+
+  .oboksobok-notion .notion-column .notion-asset-wrapper-image,
+  .oboksobok-notion .notion-column .notion-asset-wrapper-image > div,
+  .oboksobok-notion .notion-column .notion-asset-wrapper-image .lazy-image-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    align-self: stretch !important;
+  }
+}
