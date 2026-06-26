@@ -10,6 +10,7 @@
     "astro": "astro",
     "format": "biome format --write .",
     "format:check": "biome format .",
+    "format:staged": "biome format --write --staged --no-errors-on-unmatched",
     "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {

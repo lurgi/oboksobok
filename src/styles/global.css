@@ -29,6 +29,38 @@ main.essay-page {
   padding: 20px;
 }
 
+.essay-layout {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 120px 0;
+}
+
+.site-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  padding-inline: clamp(20px, 4vw, 40px);
+}
+
+.site-wordmark {
+  display: block;
+  line-height: 0;
+}
+
+.site-wordmark-frame {
+  display: flex;
+  align-items: center;
+  height: clamp(60px, 7vw, 72px);
+}
+
+.site-wordmark img {
+  display: block;
+  width: auto;
+  height: clamp(32px, 4vw, 40px);
+}
+
 @media (max-width: 640px) {
   main {
     place-items: start;

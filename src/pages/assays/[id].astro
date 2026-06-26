@@ -39,13 +39,22 @@ const description = "Notion에서 가져온 오복소복 글";
     <title>{title}</title>
   </head>
   <body>
+    <header class="site-header">
+      <a class="site-wordmark" href="/" aria-label="오복소복 홈">
+        <span class="site-wordmark-frame">
+          <img src="/oboksobok-wordmark.svg" alt="" />
+        </span>
+      </a>
+    </header>
     <main class="essay-page">
-      <NotionPage
-        authorName={assay.page.authorName}
-        title={assay.page.title}
-        recordMap={assay.recordMap}
-        rootPageId={assay.page.notionPageId}
-      />
+      <div class="essay-layout">
+        <NotionPage
+          authorName={assay.page.authorName}
+          title={assay.page.title}
+          recordMap={assay.recordMap}
+          rootPageId={assay.page.notionPageId}
+        />
+      </div>
     </main>
   </body>
 </html>
