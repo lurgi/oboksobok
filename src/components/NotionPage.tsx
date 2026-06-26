@@ -23,6 +23,7 @@ export function NotionPage({ title, authorName, recordMap, rootPageId }: NotionP
           rootPageId={rootPageId}
           fullPage={false}
           darkMode={false}
+          previewImages={true}
         />
       </div>
     </article>

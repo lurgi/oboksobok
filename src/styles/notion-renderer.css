@@ -14,6 +14,10 @@
   --essay-h3-margin-top: 1.12em;
   --essay-word-break: keep-all;
   --essay-overflow-wrap: normal;
+  --essay-landscape-image-ratio: 4 / 3;
+  --essay-portrait-image-ratio: 3 / 4;
+  --essay-image-skeleton-start: #f5f5f5;
+  --essay-image-skeleton-mid: #fafafa;
 }
 
 .oboksobok-notion .notion {
@@ -81,20 +85,83 @@
   line-height: var(--essay-h3-line-height);
 }
 
-.oboksobok-notion .notion-column .notion-asset-wrapper-image > div,
+.oboksobok-notion .notion-asset-wrapper-image > div {
+  height: auto !important;
+  padding-bottom: 0 !important;
+}
+
+.oboksobok-notion .notion-asset-wrapper-image .lazy-image-wrapper:not(.lazy-image-loaded) {
+  background: linear-gradient(
+    90deg,
+    var(--essay-image-skeleton-start) 0%,
+    var(--essay-image-skeleton-mid) 50%,
+    var(--essay-image-skeleton-start) 100%
+  );
+  background-size: 200% 100%;
+  animation: oboksobok-image-skeleton 1.6s ease-in-out infinite;
+}
+
+.oboksobok-notion .notion-asset-wrapper-image img {
+  display: block;
+  width: 100%;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none;
+  object-fit: cover;
+}
+
+.oboksobok-notion .notion-asset-wrapper-image .lazy-image-wrapper,
+.oboksobok-notion .notion-asset-wrapper-image > div > img {
+  aspect-ratio: var(--essay-landscape-image-ratio);
+  overflow: hidden;
+}
+
+.oboksobok-notion .notion-asset-wrapper-image > div > img {
+  background: linear-gradient(
+    90deg,
+    var(--essay-image-skeleton-start) 0%,
+    var(--essay-image-skeleton-mid) 50%,
+    var(--essay-image-skeleton-start) 100%
+  );
+  background-size: 200% 100%;
+  animation: oboksobok-image-skeleton 1.6s ease-in-out infinite;
+}
+
 .oboksobok-notion .notion-column .notion-asset-wrapper-image .lazy-image-wrapper {
   height: auto !important;
 }
 
-.oboksobok-notion
-  .notion-column
-  .notion-asset-wrapper-image
-  .lazy-image-wrapper
-  img.lazy-image-real {
-  height: auto !important;
+.oboksobok-notion .notion-column .notion-asset-wrapper-image .lazy-image-wrapper,
+.oboksobok-notion .notion-column .notion-asset-wrapper-image > div > img {
+  aspect-ratio: var(--essay-portrait-image-ratio);
+}
+
+.oboksobok-notion .notion-column .notion-asset-wrapper-image .lazy-image-wrapper img {
+  height: 100% !important;
   min-height: 0 !important;
   max-height: none;
-  object-fit: contain;
+  object-fit: contain !important;
+}
+
+.oboksobok-notion .notion-asset-caption {
+  text-align: center;
+}
+
+@keyframes oboksobok-image-skeleton {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oboksobok-notion .notion-asset-wrapper-image .lazy-image-wrapper,
+  .oboksobok-notion .notion-asset-wrapper-image > div > img {
+    animation: none;
+  }
 }
 
 @media (max-width: 640px) {
