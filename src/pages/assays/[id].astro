@@ -1,4 +1,5 @@
 ---
+import { getBlockValue, getPageContentBlockIds, getTextContent } from "notion-utils";
 import { NotionPage } from "../../components/NotionPage";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { type AssayPageWithRecordMap, notion } from "../../lib/server/notion";
@@ -25,8 +26,39 @@ type Props = {
 };
 
 const { assay } = Astro.props;
-const title = `${assay.page.title} | 오복소복`;
-const description = "Notion에서 가져온 오복소복 글";
+const title = assay.page.title;
+const description = getAssayDescription(assay);
+
+const descriptionBlockTypes = new Set([
+  "text",
+  "quote",
+  "bulleted_list",
+  "numbered_list",
+  "callout",
+  "toggle",
+]);
+
+function getAssayDescription(assay: AssayPageWithRecordMap) {
+  const contentBlockIds = getPageContentBlockIds(assay.recordMap, assay.page.notionPageId);
+  const text = contentBlockIds
+    .map((blockId) => getBlockValue(assay.recordMap.block[blockId]))
+    .filter((block) => block && descriptionBlockTypes.has(block.type))
+    .map((block) => getTextContent(block?.properties?.title))
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return truncateDescription(text || assay.page.title);
+}
+
+function truncateDescription(value: string) {
+  if (value.length <= 160) {
+    return value;
+  }
+
+  return `${value.slice(0, 157).trimEnd()}...`;
+}
 ---
 
 <BaseLayout title={title} description={description}>
