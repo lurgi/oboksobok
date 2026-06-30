@@ -1,0 +1,26 @@
+.root {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  padding: 80px 20px;
+}
+
+.inner {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .root {
+    padding: 100px 30px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .root {
+    padding: 120px 40px;
+  }
+}

@@ -14,8 +14,17 @@ export type AssayPageSummary = {
   id: string;
   notionPageId: string;
   published: boolean;
+  thumbnail?: AssayPageThumbnail;
   title: string;
 };
+
+export type AssayPageThumbnail = {
+  alt?: string;
+  aspectRatio: AssayThumbnailAspectRatio;
+  src: string;
+};
+
+export type AssayThumbnailAspectRatio = "1:1" | "3:4" | "4:3";
 
 export type AssayPageWithRecordMap = {
   page: AssayPageSummary;
@@ -78,6 +87,7 @@ export class OboksobokNotionClient {
           id: extractRequiredPagePropertyId(page.properties),
           notionPageId: page.id,
           published: extractRequiredPublishedValue(page.properties),
+          thumbnail: extractThumbnail(page.properties),
           title: extractTitle(page.properties),
         },
         recordMap: await this.getPageRecordMap(page.id),
@@ -222,6 +232,45 @@ function extractRequiredPublishedValue(properties: Record<string, unknown>) {
   return value;
 }
 
+function extractThumbnail(properties: Record<string, unknown>): AssayPageThumbnail | undefined {
+  const thumbnailProperty = findFirstPropertyByName(properties, ["썸네일", "thumbnail"]);
+  const file = extractFirstFileValue(thumbnailProperty);
+
+  if (!file) {
+    return undefined;
+  }
+
+  return {
+    ...file,
+    aspectRatio: extractThumbnailAspectRatio(properties),
+  };
+}
+
+function extractThumbnailAspectRatio(
+  properties: Record<string, unknown>,
+): AssayThumbnailAspectRatio {
+  const ratioProperty = findFirstPropertyByName(properties, [
+    "썸네일 비율",
+    "thumbnail ratio",
+    "thumbnail aspect ratio",
+  ]);
+  const value = extractSelectPropertyValue(ratioProperty);
+
+  if (value?.startsWith("1:1")) {
+    return "1:1";
+  }
+
+  if (value?.startsWith("3:4")) {
+    return "3:4";
+  }
+
+  if (value?.startsWith("4:3")) {
+    return "4:3";
+  }
+
+  return "1:1";
+}
+
 function findPropertyByName(properties: Record<string, unknown>, name: string) {
   const target = name.toLowerCase();
 
@@ -295,6 +344,39 @@ function extractCheckboxPropertyValue(property: unknown): boolean | undefined {
   }
 
   return typeof property.checkbox === "boolean" ? property.checkbox : undefined;
+}
+
+function extractSelectPropertyValue(property: unknown): string | undefined {
+  if (!isTypedProperty(property) || property.type !== "select" || !isSelectValue(property.select)) {
+    return undefined;
+  }
+
+  return property.select.name.trim() || undefined;
+}
+
+function extractFirstFileValue(
+  property: unknown,
+): Omit<AssayPageThumbnail, "aspectRatio"> | undefined {
+  if (!isTypedProperty(property) || property.type !== "files" || !Array.isArray(property.files)) {
+    return undefined;
+  }
+
+  const [file] = property.files;
+
+  if (!isFilePropertyValue(file)) {
+    return undefined;
+  }
+
+  switch (file.type) {
+    case "external":
+      return typeof file.external.url === "string"
+        ? { alt: file.name, src: file.external.url }
+        : undefined;
+    case "file":
+      return typeof file.file.url === "string" ? { alt: file.name, src: file.file.url } : undefined;
+    default:
+      return undefined;
+  }
 }
 
 function extractRichTextValue(value: unknown): string | undefined {
@@ -411,5 +493,32 @@ function isUniqueIdValue(value: unknown): value is { prefix: string | null; numb
 function isFormulaValue(value: unknown): value is Record<string, unknown> & { type: string } {
   return (
     typeof value === "object" && value !== null && "type" in value && typeof value.type === "string"
+  );
+}
+
+function isSelectValue(value: unknown): value is { name: string } {
+  return (
+    typeof value === "object" && value !== null && "name" in value && typeof value.name === "string"
+  );
+}
+
+function isFilePropertyValue(
+  value: unknown,
+): value is
+  | { name?: string; type: "external"; external: { url?: string } }
+  | { name?: string; type: "file"; file: { url?: string } } {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "type" in value &&
+    (value.type === "external" || value.type === "file") &&
+    ((value.type === "external" &&
+      "external" in value &&
+      typeof value.external === "object" &&
+      value.external !== null) ||
+      (value.type === "file" &&
+        "file" in value &&
+        typeof value.file === "object" &&
+        value.file !== null))
   );
 }

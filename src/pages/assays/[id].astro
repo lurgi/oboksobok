@@ -1,7 +1,7 @@
 ---
-import { getBlockValue, getPageContentBlockIds, getTextContent } from "notion-utils";
 import { NotionPage } from "../../components/NotionPage";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getAssayDescription } from "../../lib/server/assayDescription";
 import { type AssayPageWithRecordMap, notion } from "../../lib/server/notion";
 import "react-notion-x/styles.css";
 import "../../styles/notion-renderer.css";
@@ -26,38 +26,7 @@ type Props = {
 const { assay } = Astro.props;
 const title = assay.page.title;
 
-const descriptionBlockTypes = new Set([
-  "text",
-  "quote",
-  "bulleted_list",
-  "numbered_list",
-  "callout",
-  "toggle",
-]);
-
 const description = getAssayDescription(assay);
-
-function getAssayDescription(assay: AssayPageWithRecordMap) {
-  const contentBlockIds = getPageContentBlockIds(assay.recordMap, assay.page.notionPageId);
-  const text = contentBlockIds
-    .map((blockId) => getBlockValue(assay.recordMap.block[blockId]))
-    .filter((block) => block && descriptionBlockTypes.has(block.type))
-    .map((block) => getTextContent(block?.properties?.title))
-    .filter(Boolean)
-    .join(" ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  return truncateDescription(text || assay.page.title);
-}
-
-function truncateDescription(value: string) {
-  if (value.length <= 160) {
-    return value;
-  }
-
-  return `${value.slice(0, 157).trimEnd()}...`;
-}
 ---
 
 <BaseLayout title={title} description={description}>

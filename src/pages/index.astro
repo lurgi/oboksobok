@@ -1,10 +1,50 @@
 ---
+import { EssayThumbnailGrid } from "../components/EssayThumbnailGrid";
+import { EssayThumbnailListCard } from "../components/EssayThumbnailListCard";
+import { HomePageLayout } from "../components/HomePageLayout";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getAssayDescription } from "../lib/server/assayDescription";
+import { notion } from "../lib/server/notion";
 
 const title = "오복소복";
 const description = "Notion 콘텐츠를 빌드 타임에 가져오는 Astro 정적 사이트";
+
+const assays = await notion.getPublishedAssayPages();
+const assayCards = assays.flatMap((assay) => {
+  if (!assay.page.thumbnail) {
+    return [];
+  }
+
+  return [
+    {
+      description: getAssayDescription(assay),
+      href: `/assays/${assay.page.id}/`,
+      id: assay.page.id,
+      imageAlt: assay.page.thumbnail.alt ?? assay.page.title,
+      imageAspectRatio: assay.page.thumbnail.aspectRatio,
+      imageSrc: assay.page.thumbnail.src,
+      title: assay.page.title,
+    },
+  ];
+});
 ---
 
 <BaseLayout title={title} description={description}>
-  <main></main>
+  <HomePageLayout>
+    <EssayThumbnailGrid>
+      {
+        assayCards.map((assay) => (
+          <EssayThumbnailListCard
+            key={assay.id}
+            title={assay.title}
+            description={assay.description}
+            href={assay.href}
+            imageSrc={assay.imageSrc}
+            imageAlt={assay.imageAlt}
+            imageAspectRatio={assay.imageAspectRatio}
+          />
+        ))
+      }
+    </EssayThumbnailGrid>
+  </HomePageLayout>
 </BaseLayout>
