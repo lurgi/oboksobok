@@ -7,18 +7,16 @@ import "react-notion-x/styles.css";
 import "../../styles/notion-renderer.css";
 
 export async function getStaticPaths() {
-  const assay = await notion.getFirstAssayPage();
+  const assays = await notion.getPublishedAssayPages();
 
-  return [
-    {
-      params: {
-        id: assay.page.id,
-      },
-      props: {
-        assay,
-      },
+  return assays.map((assay) => ({
+    params: {
+      id: assay.page.id,
     },
-  ];
+    props: {
+      assay,
+    },
+  }));
 }
 
 type Props = {
@@ -27,7 +25,6 @@ type Props = {
 
 const { assay } = Astro.props;
 const title = assay.page.title;
-const description = getAssayDescription(assay);
 
 const descriptionBlockTypes = new Set([
   "text",
@@ -37,6 +34,8 @@ const descriptionBlockTypes = new Set([
   "callout",
   "toggle",
 ]);
+
+const description = getAssayDescription(assay);
 
 function getAssayDescription(assay: AssayPageWithRecordMap) {
   const contentBlockIds = getPageContentBlockIds(assay.recordMap, assay.page.notionPageId);

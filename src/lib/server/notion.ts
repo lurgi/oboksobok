@@ -1,3 +1,4 @@
+import type { QueryDataSourceResponse } from "@notionhq/client";
 import { Client as OfficialNotionClient } from "@notionhq/client";
 import { NotionAPI } from "notion-client";
 
@@ -12,6 +13,7 @@ export type AssayPageSummary = {
   authorName: string;
   id: string;
   notionPageId: string;
+  published: boolean;
   title: string;
 };
 
@@ -50,41 +52,75 @@ export class OboksobokNotionClient {
   }
 
   async getFirstAssayPage(): Promise<AssayPageWithRecordMap> {
-    if (!this.assaysDatabaseId) {
+    const [page] = await this.getPublishedAssayPages();
+
+    if (!page) {
+      throw new Error('Notion data source returned no pages where "발행" is checked');
+    }
+
+    return page;
+  }
+
+  async getPublishedAssayPages(): Promise<AssayPageWithRecordMap[]> {
+    const assaysDatabaseId = this.assaysDatabaseId;
+
+    if (!assaysDatabaseId) {
       throw new Error("Missing NOTION_ASSAYS_DATABASE_ID");
     }
 
+    const dataSourceId = await this.getAssaysDataSourceId(assaysDatabaseId);
+    const pages = await this.getPublishedAssayPageObjects(dataSourceId);
+
+    return Promise.all(
+      pages.map(async (page) => ({
+        page: {
+          authorName: extractAuthorName(page.properties),
+          id: extractRequiredPagePropertyId(page.properties),
+          notionPageId: page.id,
+          published: extractRequiredPublishedValue(page.properties),
+          title: extractTitle(page.properties),
+        },
+        recordMap: await this.getPageRecordMap(page.id),
+      })),
+    );
+  }
+
+  private async getAssaysDataSourceId(assaysDatabaseId: string) {
     const database = await this.official.databases.retrieve({
-      database_id: this.assaysDatabaseId,
+      database_id: assaysDatabaseId,
     });
     const dataSourceId = getFirstDataSourceId(database);
 
     if (!dataSourceId) {
-      throw new Error(`Notion database "${this.assaysDatabaseId}" has no data sources`);
+      throw new Error(`Notion database "${assaysDatabaseId}" has no data sources`);
     }
 
-    const response = await this.official.dataSources.query({
-      data_source_id: dataSourceId,
-      page_size: 1,
-      result_type: "page",
-    });
-    const page = response.results.find(isPageWithProperties);
+    return dataSourceId;
+  }
 
-    if (!page) {
-      throw new Error(`Notion data source "${dataSourceId}" returned no pages`);
-    }
+  private async getPublishedAssayPageObjects(dataSourceId: string) {
+    const pages: NotionPageWithProperties[] = [];
+    let startCursor: string | undefined;
 
-    const recordMap = await this.getPageRecordMap(page.id);
+    do {
+      const response: QueryDataSourceResponse = await this.official.dataSources.query({
+        data_source_id: dataSourceId,
+        filter: {
+          property: "발행",
+          checkbox: {
+            equals: true,
+          },
+        },
+        page_size: 100,
+        result_type: "page",
+        start_cursor: startCursor,
+      });
 
-    return {
-      page: {
-        authorName: extractAuthorName(page.properties),
-        id: extractRequiredPagePropertyId(page.properties),
-        notionPageId: page.id,
-        title: extractTitle(page.properties),
-      },
-      recordMap,
-    };
+      pages.push(...response.results.filter(isPageWithProperties));
+      startCursor = response.next_cursor ?? undefined;
+    } while (startCursor);
+
+    return pages.filter((page) => extractRequiredPublishedValue(page.properties));
   }
 
   async getPageRecordMap(pageId: string) {
@@ -170,6 +206,22 @@ function extractAuthorName(properties: Record<string, unknown>) {
   return value;
 }
 
+function extractRequiredPublishedValue(properties: Record<string, unknown>) {
+  const publishedProperty = findPropertyByName(properties, "발행");
+
+  if (!publishedProperty) {
+    throw new Error('Notion page is missing required "발행" property');
+  }
+
+  const value = extractCheckboxPropertyValue(publishedProperty);
+
+  if (typeof value !== "boolean") {
+    throw new Error('Notion page "발행" property must be a checkbox');
+  }
+
+  return value;
+}
+
 function findPropertyByName(properties: Record<string, unknown>, name: string) {
   const target = name.toLowerCase();
 
@@ -235,6 +287,14 @@ function extractPlainPropertyValue(property: unknown): string | undefined {
     default:
       return undefined;
   }
+}
+
+function extractCheckboxPropertyValue(property: unknown): boolean | undefined {
+  if (!isTypedProperty(property) || property.type !== "checkbox") {
+    return undefined;
+  }
+
+  return typeof property.checkbox === "boolean" ? property.checkbox : undefined;
 }
 
 function extractRichTextValue(value: unknown): string | undefined {
