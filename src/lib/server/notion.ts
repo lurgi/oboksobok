@@ -1,6 +1,7 @@
 import type { QueryDataSourceResponse } from "@notionhq/client";
 import { Client as OfficialNotionClient } from "@notionhq/client";
 import { NotionAPI } from "notion-client";
+import { shouldUseR2Assets, uploadThumbnailToR2 } from "./r2ThumbnailAsset";
 
 export type OboksobokNotionClientOptions = {
   integrationToken?: string;
@@ -38,6 +39,7 @@ type NotionDatabaseWithDataSources = {
 type NotionPageWithProperties = {
   object: "page";
   id: string;
+  last_edited_time: string;
   properties: Record<string, unknown>;
 };
 
@@ -81,17 +83,21 @@ export class OboksobokNotionClient {
     const pages = await this.getPublishedAssayPageObjects(dataSourceId);
 
     return Promise.all(
-      pages.map(async (page) => ({
-        page: {
-          authorName: extractAuthorName(page.properties),
-          id: extractRequiredPagePropertyId(page.properties),
-          notionPageId: page.id,
-          published: extractRequiredPublishedValue(page.properties),
-          thumbnail: extractThumbnail(page.properties),
-          title: extractTitle(page.properties),
-        },
-        recordMap: await this.getPageRecordMap(page.id),
-      })),
+      pages.map(async (page) => {
+        const id = extractRequiredPagePropertyId(page.properties);
+
+        return {
+          page: {
+            authorName: extractAuthorName(page.properties),
+            id,
+            notionPageId: page.id,
+            published: extractRequiredPublishedValue(page.properties),
+            thumbnail: await resolveThumbnail(page.properties, id, page.last_edited_time),
+            title: extractTitle(page.properties),
+          },
+          recordMap: await this.getPageRecordMap(page.id),
+        };
+      }),
     );
   }
 
@@ -168,6 +174,8 @@ function isPageWithProperties(page: unknown): page is NotionPageWithProperties {
     page.object === "page" &&
     "id" in page &&
     typeof page.id === "string" &&
+    "last_edited_time" in page &&
+    typeof page.last_edited_time === "string" &&
     "properties" in page &&
     typeof page.properties === "object" &&
     page.properties !== null
@@ -232,7 +240,11 @@ function extractRequiredPublishedValue(properties: Record<string, unknown>) {
   return value;
 }
 
-function extractThumbnail(properties: Record<string, unknown>): AssayPageThumbnail | undefined {
+async function resolveThumbnail(
+  properties: Record<string, unknown>,
+  id: string,
+  lastEditedTime: string,
+): Promise<AssayPageThumbnail | undefined> {
   const thumbnailProperty = findFirstPropertyByName(properties, ["썸네일", "thumbnail"]);
   const file = extractFirstFileValue(thumbnailProperty);
 
@@ -240,9 +252,24 @@ function extractThumbnail(properties: Record<string, unknown>): AssayPageThumbna
     return undefined;
   }
 
+  const aspectRatio = extractThumbnailAspectRatio(properties);
+
+  if (file.source === "file" && shouldUseR2Assets()) {
+    return {
+      ...(await uploadThumbnailToR2({
+        alt: file.alt,
+        id,
+        lastEditedTime,
+        sourceUrl: file.src,
+      })),
+      aspectRatio,
+    };
+  }
+
   return {
-    ...file,
-    aspectRatio: extractThumbnailAspectRatio(properties),
+    alt: file.alt,
+    aspectRatio,
+    src: file.src,
   };
 }
 
@@ -356,7 +383,7 @@ function extractSelectPropertyValue(property: unknown): string | undefined {
 
 function extractFirstFileValue(
   property: unknown,
-): Omit<AssayPageThumbnail, "aspectRatio"> | undefined {
+): (Omit<AssayPageThumbnail, "aspectRatio"> & { source: "external" | "file" }) | undefined {
   if (!isTypedProperty(property) || property.type !== "files" || !Array.isArray(property.files)) {
     return undefined;
   }
@@ -370,10 +397,12 @@ function extractFirstFileValue(
   switch (file.type) {
     case "external":
       return typeof file.external.url === "string"
-        ? { alt: file.name, src: file.external.url }
+        ? { alt: file.name, source: "external", src: file.external.url }
         : undefined;
     case "file":
-      return typeof file.file.url === "string" ? { alt: file.name, src: file.file.url } : undefined;
+      return typeof file.file.url === "string"
+        ? { alt: file.name, source: "file", src: file.file.url }
+        : undefined;
     default:
       return undefined;
   }
