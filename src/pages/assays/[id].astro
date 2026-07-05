@@ -1,5 +1,6 @@
 ---
 import { NotionPage } from "../../components/NotionPage";
+import { PageLayout } from "../../components/PageLayout";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getAssayDescription } from "../../lib/server/assayDescription";
 import { type AssayPageWithRecordMap, notion } from "../../lib/server/notion";
@@ -30,14 +31,12 @@ const description = getAssayDescription(assay);
 ---
 
 <BaseLayout title={title} description={description}>
-  <main class="essay-page">
-    <div class="essay-layout">
-      <NotionPage
-        authorName={assay.page.authorName}
-        title={assay.page.title}
-        recordMap={assay.recordMap}
-        rootPageId={assay.page.notionPageId}
-      />
-    </div>
-  </main>
+  <PageLayout>
+    <NotionPage
+      authorName={assay.page.authorName}
+      title={assay.page.title}
+      recordMap={assay.recordMap}
+      rootPageId={assay.page.notionPageId}
+    />
+  </PageLayout>
 </BaseLayout>

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import styles from "./HomePageLayout.module.css";
+import { PageLayout } from "./PageLayout";
 
 type HomePageLayoutProps = {
   children?: ReactNode;
@@ -7,8 +8,8 @@ type HomePageLayoutProps = {
 
 export function HomePageLayout({ children }: HomePageLayoutProps) {
   return (
-    <main className={styles.root}>
+    <PageLayout className={styles.page}>
       <div className={styles.inner}>{children}</div>
-    </main>
+    </PageLayout>
   );
 }

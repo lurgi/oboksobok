@@ -1,0 +1,25 @@
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  padding-inline: clamp(16px, 4vw, 40px);
+}
+
+.wordmark {
+  display: block;
+  line-height: 0;
+}
+
+.wordmarkFrame {
+  display: flex;
+  align-items: center;
+  height: clamp(60px, 7vw, 72px);
+}
+
+.wordmark img {
+  display: block;
+  width: auto;
+  height: clamp(32px, 4vw, 40px);
+}
