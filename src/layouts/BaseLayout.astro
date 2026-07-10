@@ -20,9 +20,38 @@ const { description, title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <script is:inline>
+      document.documentElement.classList.add("image-load-state-enabled");
+    </script>
   </head>
   <body>
     <SiteHeader />
     <slot />
+    <script is:inline>
+      (() => {
+        const imageSelector = [
+          "img[data-oboksobok-load-image]",
+          ".oboksobok-notion .notion-asset-wrapper-image img:not(.lazy-image-preview)",
+        ].join(",");
+
+        const markDone = (image) => {
+          image.dataset.oboksobokImageLoaded = "true";
+        };
+
+        const watchImage = (image) => {
+          image.dataset.oboksobokLoadImage = "";
+
+          if (image.complete) {
+            markDone(image);
+            return;
+          }
+
+          image.addEventListener("load", () => markDone(image), { once: true });
+          image.addEventListener("error", () => markDone(image), { once: true });
+        };
+
+        document.querySelectorAll(imageSelector).forEach(watchImage);
+      })();
+    </script>
   </body>
 </html>

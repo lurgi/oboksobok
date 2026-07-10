@@ -27,21 +27,26 @@ const assayCards = assays.flatMap((assay) => {
     },
   ];
 });
+
+const thumbnailImageSizes =
+  "(min-width: 1280px) 305px, (min-width: 1024px) calc((100vw - 60px) / 4), (min-width: 768px) calc((100vw - 32px) / 3), calc((100vw - 12px) / 2)";
 ---
 
 <BaseLayout title={title} description={description}>
   <HomePageLayout>
     <EssayThumbnailGrid>
       {
-        assayCards.map((assay) => (
+        assayCards.map((assay, index) => (
           <EssayThumbnailListCard
-            key={assay.id}
             title={assay.title}
             description={assay.description}
             href={assay.href}
             imageSrc={assay.imageSrc}
             imageAlt={assay.imageAlt}
             imageAspectRatio={assay.imageAspectRatio}
+            imageLoading="eager"
+            fetchPriority={index === 0 ? "high" : "auto"}
+            imageSizes={thumbnailImageSizes}
           />
         ))
       }
