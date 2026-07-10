@@ -1,6 +1,11 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import sharp from "sharp";
 
 const DEFAULT_OBJECT_PREFIX = "notion/essays-thumbnails";
+const JPEG_CONTENT_TYPE = "image/jpeg";
+const JPEG_MAX_BYTES = 500 * 1024;
+const JPEG_QUALITY_OPTIONS = [82, 76, 70, 64, 58, 52, 46, 40, 35, 30, 25];
+const JPEG_WIDTH_OPTIONS = [1200, 1000, 800, 640, 480, 360];
 const ONE_YEAR_SECONDS = 31_536_000;
 
 type R2ThumbnailAssetInput = {
@@ -46,15 +51,15 @@ export async function uploadThumbnailToR2({
     );
   }
 
-  const contentType = response.headers.get("content-type") ?? "application/octet-stream";
-  const body = new Uint8Array(await response.arrayBuffer());
+  const sourceBody = new Uint8Array(await response.arrayBuffer());
+  const body = await optimizeThumbnail(sourceBody);
 
   await getR2Client(config).send(
     new PutObjectCommand({
       Body: body,
       Bucket: config.bucket,
       CacheControl: `public, max-age=${ONE_YEAR_SECONDS}, immutable`,
-      ContentType: contentType,
+      ContentType: JPEG_CONTENT_TYPE,
       Key: objectKey,
     }),
   );
@@ -93,6 +98,40 @@ function getR2AssetConfig(): R2AssetConfig {
   return config as R2AssetConfig;
 }
 
+async function optimizeThumbnail(sourceBody: Uint8Array) {
+  let smallestBody: Buffer | undefined;
+
+  for (const quality of JPEG_QUALITY_OPTIONS) {
+    for (const width of JPEG_WIDTH_OPTIONS) {
+      const body = await sharp(sourceBody)
+        .rotate()
+        .resize({
+          fit: "inside",
+          height: width,
+          withoutEnlargement: true,
+          width,
+        })
+        .flatten({ background: "#ffffff" })
+        .jpeg({
+          mozjpeg: true,
+          progressive: true,
+          quality,
+        })
+        .toBuffer();
+
+      if (!smallestBody || body.byteLength < smallestBody.byteLength) {
+        smallestBody = body;
+      }
+
+      if (body.byteLength < JPEG_MAX_BYTES) {
+        return body;
+      }
+    }
+  }
+
+  return smallestBody ?? Buffer.from(sourceBody);
+}
+
 function getR2Client(config: R2AssetConfig) {
   client ??= new S3Client({
     credentials: {
@@ -108,7 +147,7 @@ function getR2Client(config: R2AssetConfig) {
 }
 
 function getThumbnailObjectKey(objectPrefix: string, id: string) {
-  return `${trimSlashes(objectPrefix)}/${trimSlashes(id)}`;
+  return `${trimSlashes(objectPrefix)}/${trimSlashes(id)}.jpg`;
 }
 
 function trimSlashes(value: string) {
