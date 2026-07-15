@@ -30,7 +30,20 @@ const title = assay.page.title;
 const description = getAssayDescription(assay);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout
+  title={title}
+  description={description}
+  pageType="article"
+  authorName={assay.page.authorName}
+  image={
+    assay.page.thumbnail
+      ? {
+          alt: assay.page.thumbnail.alt ?? assay.page.title,
+          src: assay.page.thumbnail.src,
+        }
+      : undefined
+  }
+>
   <PageLayout>
     <NotionPage
       authorName={assay.page.authorName}

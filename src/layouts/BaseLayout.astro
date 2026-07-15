@@ -3,11 +3,58 @@ import { SiteHeader } from "../components/SiteHeader";
 import "../styles/global.css";
 
 type Props = {
+  authorName?: string;
   description: string;
+  image?: {
+    alt: string;
+    height?: number;
+    src: string;
+    width?: number;
+  };
+  pageType: "article" | "website";
   title: string;
 };
 
-const { description, title } = Astro.props;
+const { authorName, description, image, pageType, title } = Astro.props;
+const site = Astro.site ?? new URL("https://oboksobok.com");
+const canonicalUrl = new URL(Astro.url.pathname, site);
+const defaultImagePath = "/oboksobok-og.png";
+const seoImage = image ?? {
+  alt: "오복소복",
+  height: 630,
+  src: defaultImagePath,
+  width: 1200,
+};
+const seoImageUrl = new URL(seoImage.src, site);
+
+const structuredData =
+  pageType === "article"
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        author: {
+          "@type": "Person",
+          name: authorName,
+        },
+        description,
+        headline: title,
+        image: seoImageUrl.href,
+        mainEntityOfPage: {
+          "@id": canonicalUrl.href,
+          "@type": "WebPage",
+        },
+        url: canonicalUrl.href,
+      }
+    : {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        description,
+        inLanguage: "ko-KR",
+        name: title,
+        url: canonicalUrl.href,
+      };
+
+const serializedStructuredData = JSON.stringify(structuredData).replaceAll("<", "\\u003c");
 ---
 
 <!doctype html>
@@ -15,11 +62,26 @@ const { description, title } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:type" content={pageType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="오복소복" />
+    <meta property="og:image" content={seoImageUrl} />
+    <meta property="og:image:alt" content={seoImage.alt} />
+    {seoImage.width && <meta property="og:image:width" content={seoImage.width.toString()} />}
+    {seoImage.height && <meta property="og:image:height" content={seoImage.height.toString()} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={seoImageUrl} />
+    <meta name="twitter:image:alt" content={seoImage.alt} />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <script type="application/ld+json" set:html={serializedStructuredData} />
     <script is:inline>
       document.documentElement.classList.add("image-load-state-enabled");
     </script>
