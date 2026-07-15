@@ -1,5 +1,5 @@
 import { getBlockValue, getPageContentBlockIds, getTextContent } from "notion-utils";
-import type { AssayPageWithRecordMap } from "./notion";
+import type { EssayPageWithRecordMap } from "./notion";
 
 const descriptionBlockTypes = new Set([
   "text",
@@ -10,10 +10,10 @@ const descriptionBlockTypes = new Set([
   "toggle",
 ]);
 
-export function getAssayDescription(assay: AssayPageWithRecordMap) {
-  const contentBlockIds = getPageContentBlockIds(assay.recordMap, assay.page.notionPageId);
+export function getEssayDescription(essay: EssayPageWithRecordMap) {
+  const contentBlockIds = getPageContentBlockIds(essay.recordMap, essay.page.notionPageId);
   const text = contentBlockIds
-    .map((blockId) => getBlockValue(assay.recordMap.block[blockId]))
+    .map((blockId) => getBlockValue(essay.recordMap.block[blockId]))
     .filter((block) => block && descriptionBlockTypes.has(block.type))
     .map((block) => getTextContent(block?.properties?.title))
     .filter(Boolean)
@@ -21,7 +21,7 @@ export function getAssayDescription(assay: AssayPageWithRecordMap) {
     .replace(/\s+/g, " ")
     .trim();
 
-  return truncateDescription(text || assay.page.title);
+  return truncateDescription(text || essay.page.title);
 }
 
 function truncateDescription(value: string) {

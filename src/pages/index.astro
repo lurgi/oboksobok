@@ -5,28 +5,28 @@ import { EssayThumbnailListCard } from "../components/EssayThumbnailListCard";
 import { Hero } from "../components/Hero";
 import { HomePageLayout } from "../components/HomePageLayout";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getAssayDescription } from "../lib/server/assayDescription";
+import { getEssayDescription } from "../lib/server/essayDescription";
 import { notion } from "../lib/server/notion";
 
 const title = "오복소복";
 const description =
   "오복소복은 쉴 때 우리가 하는 일을 담습니다. 사소하고 평범한 행위들 속에서 쉼의 가치를 발견하고 의미 있는 순간을 쌓아가는 공간입니다.";
 
-const assays = await notion.getPublishedAssayPages();
-const assayCards = assays.flatMap((assay) => {
-  if (!assay.page.thumbnail) {
+const essays = await notion.getPublishedEssayPages();
+const essayCards = essays.flatMap((essay) => {
+  if (!essay.page.thumbnail) {
     return [];
   }
 
   return [
     {
-      description: getAssayDescription(assay),
-      href: `/assays/${assay.page.id}/`,
-      id: assay.page.id,
-      imageAlt: assay.page.thumbnail.alt ?? assay.page.title,
-      imageAspectRatio: assay.page.thumbnail.aspectRatio,
-      imageSrc: assay.page.thumbnail.src,
-      title: assay.page.title,
+      description: getEssayDescription(essay),
+      href: `/essays/${essay.page.id}/`,
+      id: essay.page.id,
+      imageAlt: essay.page.thumbnail.alt ?? essay.page.title,
+      imageAspectRatio: essay.page.thumbnail.aspectRatio,
+      imageSrc: essay.page.thumbnail.src,
+      title: essay.page.title,
     },
   ];
 });
@@ -41,14 +41,14 @@ const thumbnailImageSizes =
     <Divider />
     <EssayThumbnailGrid>
       {
-        assayCards.map((assay, index) => (
+        essayCards.map((essay, index) => (
           <EssayThumbnailListCard
-            title={assay.title}
-            description={assay.description}
-            href={assay.href}
-            imageSrc={assay.imageSrc}
-            imageAlt={assay.imageAlt}
-            imageAspectRatio={assay.imageAspectRatio}
+            title={essay.title}
+            description={essay.description}
+            href={essay.href}
+            imageSrc={essay.imageSrc}
+            imageAlt={essay.imageAlt}
+            imageAspectRatio={essay.imageAspectRatio}
             imageLoading="eager"
             fetchPriority={index === 0 ? "high" : "auto"}
             imageSizes={thumbnailImageSizes}

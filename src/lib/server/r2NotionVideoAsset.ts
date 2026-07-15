@@ -11,7 +11,7 @@ import {
   withTransientRetry,
 } from "./r2AssetStorage";
 
-const DEFAULT_VIDEO_OBJECT_PREFIX = "notion/assays-videos";
+const DEFAULT_VIDEO_OBJECT_PREFIX = "notion/essays-videos";
 const DEFAULT_VIDEO_CONTENT_TYPE = "video/mp4";
 const EXTERNAL_VIDEO_HOST_PARTS = [
   "youtube.com",

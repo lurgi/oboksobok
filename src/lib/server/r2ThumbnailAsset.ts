@@ -8,7 +8,7 @@ import {
   withTransientRetry,
 } from "./r2AssetStorage";
 
-const DEFAULT_OBJECT_PREFIX = "notion/assays-thumbnails";
+const DEFAULT_OBJECT_PREFIX = "notion/essays-thumbnails";
 const JPEG_CONTENT_TYPE = "image/jpeg";
 const JPEG_MAX_BYTES = 500 * 1024;
 const JPEG_QUALITY_OPTIONS = [82, 76, 70, 64, 58, 52, 46, 40, 35, 30, 25];

@@ -8,28 +8,28 @@ export type OboksobokNotionClientOptions = {
   integrationToken?: string;
   tokenV2?: string;
   activeUser?: string;
-  assaysDatabaseId?: string;
+  essaysDatabaseId?: string;
 };
 
-export type AssayPageSummary = {
+export type EssayPageSummary = {
   authorName: string;
   id: string;
   notionPageId: string;
   published: boolean;
-  thumbnail?: AssayPageThumbnail;
+  thumbnail?: EssayPageThumbnail;
   title: string;
 };
 
-export type AssayPageThumbnail = {
+export type EssayPageThumbnail = {
   alt?: string;
-  aspectRatio: AssayThumbnailAspectRatio;
+  aspectRatio: EssayThumbnailAspectRatio;
   src: string;
 };
 
-export type AssayThumbnailAspectRatio = "1:1" | "3:4" | "4:3";
+export type EssayThumbnailAspectRatio = "1:1" | "3:4" | "4:3";
 
-export type AssayPageWithRecordMap = {
-  page: AssayPageSummary;
+export type EssayPageWithRecordMap = {
+  page: EssayPageSummary;
   recordMap: Awaited<ReturnType<NotionAPI["getPage"]>>;
 };
 
@@ -46,7 +46,7 @@ type NotionPageWithProperties = {
 
 export class OboksobokNotionClient {
   readonly official: OfficialNotionClient;
-  readonly assaysDatabaseId?: string;
+  readonly essaysDatabaseId?: string;
 
   private readonly recordMapApi: NotionAPI;
 
@@ -55,7 +55,7 @@ export class OboksobokNotionClient {
     const tokenV2 = options.tokenV2 ?? import.meta.env.NOTION_TOKEN_V2;
     const activeUser = options.activeUser ?? import.meta.env.NOTION_ACTIVE_USER;
 
-    this.assaysDatabaseId = options.assaysDatabaseId ?? import.meta.env.NOTION_ASSAYS_DATABASE_ID;
+    this.essaysDatabaseId = options.essaysDatabaseId ?? import.meta.env.NOTION_ESSAYS_DATABASE_ID;
     this.official = new OfficialNotionClient({ auth: integrationToken });
     this.recordMapApi = new NotionAPI({
       authToken: tokenV2,
@@ -63,8 +63,8 @@ export class OboksobokNotionClient {
     });
   }
 
-  async getFirstAssayPage(): Promise<AssayPageWithRecordMap> {
-    const [page] = await this.getPublishedAssayPages();
+  async getFirstEssayPage(): Promise<EssayPageWithRecordMap> {
+    const [page] = await this.getPublishedEssayPages();
 
     if (!page) {
       throw new Error('Notion data source returned no pages where "발행" is checked');
@@ -73,15 +73,15 @@ export class OboksobokNotionClient {
     return page;
   }
 
-  async getPublishedAssayPages(): Promise<AssayPageWithRecordMap[]> {
-    const assaysDatabaseId = this.assaysDatabaseId;
+  async getPublishedEssayPages(): Promise<EssayPageWithRecordMap[]> {
+    const essaysDatabaseId = this.essaysDatabaseId;
 
-    if (!assaysDatabaseId) {
-      throw new Error("Missing NOTION_ASSAYS_DATABASE_ID");
+    if (!essaysDatabaseId) {
+      throw new Error("Missing NOTION_ESSAYS_DATABASE_ID");
     }
 
-    const dataSourceId = await this.getAssaysDataSourceId(assaysDatabaseId);
-    const pages = await this.getPublishedAssayPageObjects(dataSourceId);
+    const dataSourceId = await this.getEssaysDataSourceId(essaysDatabaseId);
+    const pages = await this.getPublishedEssayPageObjects(dataSourceId);
 
     return Promise.all(
       pages.map(async (page) => {
@@ -111,20 +111,20 @@ export class OboksobokNotionClient {
     );
   }
 
-  private async getAssaysDataSourceId(assaysDatabaseId: string) {
+  private async getEssaysDataSourceId(essaysDatabaseId: string) {
     const database = await this.official.databases.retrieve({
-      database_id: assaysDatabaseId,
+      database_id: essaysDatabaseId,
     });
     const dataSourceId = getFirstDataSourceId(database);
 
     if (!dataSourceId) {
-      throw new Error(`Notion database "${assaysDatabaseId}" has no data sources`);
+      throw new Error(`Notion database "${essaysDatabaseId}" has no data sources`);
     }
 
     return dataSourceId;
   }
 
-  private async getPublishedAssayPageObjects(dataSourceId: string) {
+  private async getPublishedEssayPageObjects(dataSourceId: string) {
     const pages: NotionPageWithProperties[] = [];
     let startCursor: string | undefined;
 
@@ -254,7 +254,7 @@ async function resolveThumbnail(
   properties: Record<string, unknown>,
   id: string,
   lastEditedTime: string,
-): Promise<AssayPageThumbnail | undefined> {
+): Promise<EssayPageThumbnail | undefined> {
   const thumbnailProperty = findFirstPropertyByName(properties, ["썸네일", "thumbnail"]);
   const file = extractFirstFileValue(thumbnailProperty);
 
@@ -285,7 +285,7 @@ async function resolveThumbnail(
 
 function extractThumbnailAspectRatio(
   properties: Record<string, unknown>,
-): AssayThumbnailAspectRatio {
+): EssayThumbnailAspectRatio {
   const ratioProperty = findFirstPropertyByName(properties, [
     "썸네일 비율",
     "thumbnail ratio",
@@ -393,7 +393,7 @@ function extractSelectPropertyValue(property: unknown): string | undefined {
 
 function extractFirstFileValue(
   property: unknown,
-): (Omit<AssayPageThumbnail, "aspectRatio"> & { source: "external" | "file" }) | undefined {
+): (Omit<EssayPageThumbnail, "aspectRatio"> & { source: "external" | "file" }) | undefined {
   if (!isTypedProperty(property) || property.type !== "files" || !Array.isArray(property.files)) {
     return undefined;
   }

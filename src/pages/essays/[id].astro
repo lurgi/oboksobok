@@ -1,0 +1,55 @@
+---
+import { NotionPage } from "../../components/NotionPage";
+import { PageLayout } from "../../components/PageLayout";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getEssayDescription } from "../../lib/server/essayDescription";
+import { type EssayPageWithRecordMap, notion } from "../../lib/server/notion";
+import "react-notion-x/styles.css";
+import "../../styles/notion-renderer.css";
+
+export async function getStaticPaths() {
+  const essays = await notion.getPublishedEssayPages();
+
+  return essays.map((essay) => ({
+    params: {
+      id: essay.page.id,
+    },
+    props: {
+      essay,
+    },
+  }));
+}
+
+type Props = {
+  essay: EssayPageWithRecordMap;
+};
+
+const { essay } = Astro.props;
+const title = essay.page.title;
+
+const description = getEssayDescription(essay);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  pageType="article"
+  authorName={essay.page.authorName}
+  image={
+    essay.page.thumbnail
+      ? {
+          alt: essay.page.thumbnail.alt ?? essay.page.title,
+          src: essay.page.thumbnail.src,
+        }
+      : undefined
+  }
+>
+  <PageLayout>
+    <NotionPage
+      authorName={essay.page.authorName}
+      title={essay.page.title}
+      recordMap={essay.recordMap}
+      rootPageId={essay.page.notionPageId}
+    />
+  </PageLayout>
+</BaseLayout>
