@@ -1,4 +1,4 @@
-.page {
+:where(.page) {
   box-sizing: border-box;
   width: 100%;
   min-height: 100vh;
@@ -6,13 +6,13 @@
 }
 
 @media (min-width: 768px) {
-  .page {
+  :where(.page) {
     padding-inline: 30px;
   }
 }
 
 @media (min-width: 1024px) {
-  .page {
+  :where(.page) {
     padding-inline: 40px;
   }
 }

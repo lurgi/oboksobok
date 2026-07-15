@@ -1,6 +1,8 @@
 ---
+import { Divider } from "../components/Divider";
 import { EssayThumbnailGrid } from "../components/EssayThumbnailGrid";
 import { EssayThumbnailListCard } from "../components/EssayThumbnailListCard";
+import { Hero } from "../components/Hero";
 import { HomePageLayout } from "../components/HomePageLayout";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getAssayDescription } from "../lib/server/assayDescription";
@@ -35,6 +37,8 @@ const thumbnailImageSizes =
 
 <BaseLayout title={title} description={description} pageType="website">
   <HomePageLayout>
+    <Hero />
+    <Divider />
     <EssayThumbnailGrid>
       {
         assayCards.map((assay, index) => (

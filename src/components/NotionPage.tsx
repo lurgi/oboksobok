@@ -1,5 +1,6 @@
 import { NotionRenderer } from "react-notion-x";
 import type { AssayPageWithRecordMap } from "../lib/server/notion";
+import { Divider } from "./Divider";
 import styles from "./NotionPage.module.css";
 
 type NotionPageProps = {
@@ -15,7 +16,7 @@ export function NotionPage({ title, authorName, recordMap, rootPageId }: NotionP
       <header className={styles.header}>
         <h1 id="assay-title">{title}</h1>
         <div className={styles.author}>{authorName}</div>
-        <hr className={styles.divider} />
+        <Divider />
       </header>
       <div>
         <NotionRenderer
