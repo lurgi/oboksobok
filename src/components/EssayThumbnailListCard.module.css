@@ -78,6 +78,7 @@
   font-weight: 500;
   line-height: 1.35;
   line-clamp: 2;
+  word-break: keep-all;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
@@ -91,6 +92,7 @@
   font-weight: 400;
   line-height: 1.55;
   line-clamp: 3;
+  word-break: keep-all;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
