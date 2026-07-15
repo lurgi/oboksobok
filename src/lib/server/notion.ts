@@ -1,6 +1,7 @@
 import type { QueryDataSourceResponse } from "@notionhq/client";
 import { Client as OfficialNotionClient } from "@notionhq/client";
 import { NotionAPI } from "notion-client";
+import { materializeNotionVideoAssetsToR2 } from "./r2NotionVideoAsset";
 import { shouldUseR2Assets, uploadThumbnailToR2 } from "./r2ThumbnailAsset";
 
 export type OboksobokNotionClientOptions = {
@@ -85,6 +86,15 @@ export class OboksobokNotionClient {
     return Promise.all(
       pages.map(async (page) => {
         const id = extractRequiredPagePropertyId(page.properties);
+        const recordMap = await this.getPageRecordMap(page.id);
+
+        if (shouldUseR2Assets()) {
+          await materializeNotionVideoAssetsToR2({
+            lastEditedTime: page.last_edited_time,
+            pageId: page.id,
+            recordMap,
+          });
+        }
 
         return {
           page: {
@@ -95,7 +105,7 @@ export class OboksobokNotionClient {
             thumbnail: await resolveThumbnail(page.properties, id, page.last_edited_time),
             title: extractTitle(page.properties),
           },
-          recordMap: await this.getPageRecordMap(page.id),
+          recordMap,
         };
       }),
     );
