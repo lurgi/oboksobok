@@ -1,7 +1,7 @@
 .hero {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(24px, calc(19.66px + 1.205vw), 32px);
 }
 
 .heading,
@@ -10,35 +10,22 @@
 }
 
 .heading {
-  font-size: 24px;
+  font-size: clamp(24px, calc(19.66px + 1.205vw), 32px);
   font-weight: 600;
   line-height: 1.3;
 }
 
 .description {
-  font-size: 14px;
+  font-size: clamp(14px, calc(10.75px + 0.904vw), 20px);
   font-weight: 500;
+  line-height: 1.5;
 }
 
 .mobileBreak {
   display: block;
 }
 
-@media (min-width: 768px) {
-  .hero {
-    gap: 32px;
-  }
-
-  .heading {
-    font-size: 32px;
-    line-height: normal;
-  }
-
-  .description {
-    font-size: 20px;
-    line-height: 1.4;
-  }
-
+@media (min-width: 640px) {
   .mobileBreak {
     display: none;
   }
