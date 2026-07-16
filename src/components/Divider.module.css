@@ -1,7 +1,19 @@
 .divider {
   height: 1px;
   width: 100%;
-  margin: 10px 0 0;
+  margin: 24px 0 0;
   border: 0;
   background: var(--color-border-muted);
+}
+
+@media (min-width: 768px) {
+  .divider {
+    margin-top: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .divider {
+    margin-top: 40px;
+  }
 }

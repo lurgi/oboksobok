@@ -87,7 +87,7 @@ const serializedStructuredData = JSON.stringify(structuredData).replaceAll("<", 
     </script>
   </head>
   <body>
-    <SiteHeader />
+    <SiteHeader client:load />
     <slot />
     <script is:inline>
       (() => {
