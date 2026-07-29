@@ -44,6 +44,15 @@ type NotionPageWithProperties = {
   properties: Record<string, unknown>;
 };
 
+type EssayPageProcessingStage =
+  | "extract-id"
+  | "fetch-record-map"
+  | "materialize-video-assets"
+  | "extract-author"
+  | "extract-published"
+  | "resolve-thumbnail"
+  | "extract-title";
+
 export class OboksobokNotionClient {
   readonly official: OfficialNotionClient;
   readonly essaysDatabaseId?: string;
@@ -82,33 +91,9 @@ export class OboksobokNotionClient {
 
     const dataSourceId = await this.getEssaysDataSourceId(essaysDatabaseId);
     const pages = await this.getPublishedEssayPageObjects(dataSourceId);
+    const processedPages = await Promise.all(pages.map((page) => this.processEssayPage(page)));
 
-    return Promise.all(
-      pages.map(async (page) => {
-        const id = extractRequiredPagePropertyId(page.properties);
-        const recordMap = await this.getPageRecordMap(page.id);
-
-        if (shouldUseR2Assets()) {
-          await materializeNotionVideoAssetsToR2({
-            lastEditedTime: page.last_edited_time,
-            pageId: page.id,
-            recordMap,
-          });
-        }
-
-        return {
-          page: {
-            authorName: extractAuthorName(page.properties),
-            id,
-            notionPageId: page.id,
-            published: extractRequiredPublishedValue(page.properties),
-            thumbnail: await resolveThumbnail(page.properties, id, page.last_edited_time),
-            title: extractTitle(page.properties),
-          },
-          recordMap,
-        };
-      }),
-    );
+    return processedPages.filter((page): page is EssayPageWithRecordMap => page !== undefined);
   }
 
   private async getEssaysDataSourceId(essaysDatabaseId: string) {
@@ -146,7 +131,7 @@ export class OboksobokNotionClient {
       startCursor = response.next_cursor ?? undefined;
     } while (startCursor);
 
-    return pages.filter((page) => extractRequiredPublishedValue(page.properties));
+    return pages;
   }
 
   async getPageRecordMap(pageId: string) {
@@ -154,6 +139,72 @@ export class OboksobokNotionClient {
       fetchCollections: false,
       signFileUrls: true,
     });
+  }
+
+  private async processEssayPage(
+    page: NotionPageWithProperties,
+  ): Promise<EssayPageWithRecordMap | undefined> {
+    let essayId: string | undefined;
+    let stage: EssayPageProcessingStage = "extract-id";
+
+    try {
+      essayId = extractRequiredPagePropertyId(page.properties);
+
+      stage = "extract-published";
+      const published = extractRequiredPublishedValue(page.properties);
+
+      if (!published) {
+        return undefined;
+      }
+
+      stage = "fetch-record-map";
+      const recordMap = await this.getPageRecordMap(page.id);
+
+      if (shouldUseR2Assets()) {
+        stage = "materialize-video-assets";
+        await materializeNotionVideoAssetsToR2({
+          lastEditedTime: page.last_edited_time,
+          pageId: page.id,
+          recordMap,
+        });
+      }
+
+      stage = "extract-author";
+      const authorName = extractAuthorName(page.properties);
+
+      stage = "resolve-thumbnail";
+      const thumbnail = await resolveThumbnail(page.properties, essayId, page.last_edited_time);
+
+      stage = "extract-title";
+      const title = extractTitle(page.properties);
+
+      return {
+        page: {
+          authorName,
+          id: essayId,
+          notionPageId: page.id,
+          published,
+          thumbnail,
+          title,
+        },
+        recordMap,
+      };
+    } catch (error) {
+      console.error("Failed to process Notion essay page", {
+        error,
+        essayId,
+        lastEditedTime: page.last_edited_time,
+        notionPageId: page.id,
+        stage,
+      });
+
+      const essayIdContext = essayId ? ` (essay ID: "${essayId}")` : "";
+
+      throw new Error(
+        `Failed to process Notion page "${page.id}"${essayIdContext} during "${stage}"`,
+        { cause: error },
+      );
+    }
   }
 }
 
