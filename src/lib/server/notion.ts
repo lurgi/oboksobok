@@ -393,6 +393,8 @@ function extractAuthorPropertyValue(property: unknown): string | undefined {
       return extractPeopleNames(property.people);
     case "created_by":
       return extractUserName(property.created_by);
+    case "select":
+      return extractSelectPropertyValue(property);
     default:
       return extractPlainPropertyValue(property);
   }
