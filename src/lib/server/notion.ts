@@ -69,6 +69,11 @@ export class OboksobokNotionClient {
     this.recordMapApi = new NotionAPI({
       authToken: tokenV2,
       activeUser,
+      ofetchOptions: {
+        headers: {
+          "User-Agent": "notion-client/7.10.0",
+        },
+      },
     });
   }
 
