@@ -48,6 +48,16 @@
           }
         }
       }
+    },
+    {
+      "includes": ["public/oboksobok-homepagelogo.svg"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noSvgWithoutTitle": "off"
+          }
+        }
+      }
     }
   ]
 }

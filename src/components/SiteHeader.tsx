@@ -27,7 +27,7 @@ export function SiteHeader() {
       <div className={styles.inner}>
         <a className={styles.wordmark} href="/" aria-label="오복소복 홈">
           <span className={styles.wordmarkFrame}>
-            <img src="/oboksobok-wordmark.svg" alt="" />
+            <img src="/oboksobok-homepagelogo.svg" alt="" />
           </span>
         </a>
       </div>
