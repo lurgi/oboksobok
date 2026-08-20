@@ -252,7 +252,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 560px) {
   .oboksobok-notion .notion-row .notion-column {
     width: 100% !important;
     max-width: 100%;
