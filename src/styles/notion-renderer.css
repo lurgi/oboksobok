@@ -11,8 +11,6 @@
   --essay-h1-margin-top: 1.32em;
   --essay-h2-margin-top: 1.24em;
   --essay-h3-margin-top: 1.12em;
-  --essay-word-break: keep-all;
-  --essay-overflow-wrap: normal;
   --essay-landscape-image-ratio: 4 / 3;
   --essay-portrait-image-ratio: 3 / 4;
   --essay-image-skeleton-start: #f5f5f5;
@@ -37,8 +35,6 @@
   padding-top: 0;
   padding-bottom: 0;
   line-height: var(--essay-line-height);
-  word-break: var(--essay-word-break);
-  overflow-wrap: var(--essay-overflow-wrap);
 }
 
 .oboksobok-notion .notion-list .notion-text {
@@ -62,8 +58,6 @@
   margin-top: 0.9em;
   margin-bottom: 0.9em;
   line-height: var(--essay-line-height);
-  word-break: var(--essay-word-break);
-  overflow-wrap: var(--essay-overflow-wrap);
 }
 
 .oboksobok-notion .notion-h {
