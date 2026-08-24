@@ -92,6 +92,8 @@
   font-weight: 400;
   line-height: 1.55;
   line-clamp: 3;
+  text-align: justify;
+  text-justify: inter-character;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }

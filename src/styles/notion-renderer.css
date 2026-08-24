@@ -35,6 +35,8 @@
   padding-top: 0;
   padding-bottom: 0;
   line-height: var(--essay-line-height);
+  text-align: justify;
+  text-justify: inter-character;
 }
 
 .oboksobok-notion .notion-list .notion-text {
@@ -58,6 +60,8 @@
   margin-top: 0.9em;
   margin-bottom: 0.9em;
   line-height: var(--essay-line-height);
+  text-align: justify;
+  text-justify: inter-character;
 }
 
 .oboksobok-notion .notion-h {
