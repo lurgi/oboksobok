@@ -3,12 +3,22 @@
 :root {
   --color-text-muted: #6d6d6d;
   --color-border-muted: #e5e5e5;
+  --type-line-height-display: 1.4;
+  --type-line-height-heading: 1.45;
+  --type-line-height-body: 1.78;
+  --type-line-height-supporting: 1.65;
+  --type-line-height-meta: 1.55;
+  --type-letter-spacing-heading: 0.01em;
+  --type-letter-spacing-body: 0.015em;
+  --type-letter-spacing-supporting: 0.02em;
 }
 
 body {
   margin: 0;
   font-family:
     "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: var(--type-line-height-body);
+  letter-spacing: var(--type-letter-spacing-body);
   color: #2d2d2d;
   background: #fff;
 }
