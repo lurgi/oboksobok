@@ -1,8 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap");
 
 :root {
   --color-text-muted: #6d6d6d;
   --color-border-muted: #e5e5e5;
+  --type-font-family-sans:
+    "Noto Sans", "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
   --type-line-height-display: 1.4;
   --type-line-height-heading: 1.45;
   --type-line-height-body: 1.78;
@@ -15,8 +18,7 @@
 
 body {
   margin: 0;
-  font-family:
-    "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--type-font-family-sans);
   line-height: var(--type-line-height-body);
   letter-spacing: var(--type-letter-spacing-body);
   color: #2d2d2d;

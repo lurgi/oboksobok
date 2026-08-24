@@ -29,5 +29,5 @@ function truncateDescription(value: string) {
     return value;
   }
 
-  return `${value.slice(0, 157).trimEnd()}...`;
+  return `${value.slice(0, 159).trimEnd()}…`;
 }

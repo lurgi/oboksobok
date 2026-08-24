@@ -31,6 +31,7 @@
   margin-bottom: var(--essay-paragraph-gap);
   padding-top: 0;
   padding-bottom: 0;
+  font-variant-ligatures: no-common-ligatures;
   line-height: var(--type-line-height-body);
   text-align: justify;
   text-justify: inter-character;
@@ -56,6 +57,7 @@
 .oboksobok-notion .notion-quote {
   margin-top: 0.9em;
   margin-bottom: 0.9em;
+  font-variant-ligatures: no-common-ligatures;
   line-height: var(--type-line-height-body);
   text-align: justify;
   text-justify: inter-character;

@@ -91,6 +91,7 @@
   color: var(--color-text-muted);
   font-size: 12px;
   font-weight: 400;
+  font-variant-ligatures: no-common-ligatures;
   line-height: var(--type-line-height-supporting);
   line-clamp: 3;
   letter-spacing: var(--type-letter-spacing-supporting);
