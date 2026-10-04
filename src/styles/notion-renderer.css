@@ -55,12 +55,23 @@
 }
 
 .oboksobok-notion .notion-quote {
-  margin-top: 0.9em;
-  margin-bottom: 0.9em;
+  box-sizing: border-box;
+  margin: 1em 0;
+  border-left: 2px solid var(--color-border-muted);
+  padding: 0.2em 1em;
+  font-size: 1em;
+  font-weight: inherit;
   font-variant-ligatures: no-common-ligatures;
   line-height: var(--type-line-height-body);
-  text-align: justify;
-  text-justify: inter-character;
+  letter-spacing: var(--type-letter-spacing-body);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.oboksobok-notion .notion-quote .notion-text {
+  text-align: left;
+  text-justify: auto;
 }
 
 .oboksobok-notion .notion-h {
