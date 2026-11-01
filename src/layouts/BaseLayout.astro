@@ -61,6 +61,25 @@ const serializedStructuredData = JSON.stringify(structuredData).replaceAll("<", 
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
+    {
+      import.meta.env.PROD && (
+        <>
+          <script
+            is:inline
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-KN11C1Y9HT"
+          />
+          <script is:inline>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              window.dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-KN11C1Y9HT");
+          </script>
+        </>
+      )
+    }
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
     <meta property="og:title" content={title} />
