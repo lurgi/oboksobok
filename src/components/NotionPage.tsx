@@ -11,11 +11,14 @@ type NotionPageProps = {
 };
 
 export function NotionPage({ title, authorName, recordMap, rootPageId }: NotionPageProps) {
+  const name = authorName.trim();
+  const displayName = Array.from(name).slice(1).join("") || name;
+
   return (
     <article className={`${styles.root} oboksobok-notion`} aria-labelledby="essay-title">
       <header className={styles.header}>
         <h1 id="essay-title">{title}</h1>
-        <div className={styles.author}>{authorName}</div>
+        <p className={styles.author}>{displayName}</p>
         <Divider />
       </header>
       <div>

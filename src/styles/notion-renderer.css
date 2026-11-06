@@ -1,5 +1,5 @@
 .oboksobok-notion {
-  --essay-paragraph-gap: 0.56em;
+  --essay-paragraph-gap: 0.8em;
   --essay-heading-weight: 500;
   --essay-h1-size: 2rem;
   --essay-h2-size: 1.55rem;
@@ -26,9 +26,13 @@
   padding-left: 0;
 }
 
-.oboksobok-notion .notion-text {
+.oboksobok-notion .notion-text,
+.oboksobok-notion .notion-blank {
   margin-top: var(--essay-paragraph-gap);
   margin-bottom: var(--essay-paragraph-gap);
+}
+
+.oboksobok-notion .notion-text {
   padding-top: 0;
   padding-bottom: 0;
   font-variant-ligatures: no-common-ligatures;
