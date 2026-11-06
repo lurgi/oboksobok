@@ -1,7 +1,6 @@
 ---
 import { EssayThumbnailGrid } from "../components/EssayThumbnailGrid";
 import { EssayThumbnailListCard } from "../components/EssayThumbnailListCard";
-import { Hero } from "../components/Hero";
 import { HomePageLayout } from "../components/HomePageLayout";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getEssayDescription } from "../lib/server/essayDescription";
@@ -36,7 +35,6 @@ const thumbnailImageSizes =
 
 <BaseLayout title={title} description={description} pageType="website">
   <HomePageLayout>
-    <Hero />
     <EssayThumbnailGrid>
       {
         essayCards.map((essay, index) => (
